@@ -2,9 +2,9 @@
 name = "BLAST-Lite"
 version = "1.1.0"
 authors = [
-  { name="Paul Gasper", email="Paul.Gasper@nrel.gov" },
-  { name="Nina Prakash", email="Nina.Prakash@nrel.gov" },
-  { name="Kandler Smith", email="Kandler.Smith@nrel.gov" },
+  { name="Paul Gasper", email="Paul.Gasper@nlr.gov" },
+  { name="Nina Prakash", email="Nina.Prakash@nlr.gov" },
+  { name="Kandler Smith"},
 ]
 description = "Tool to model lifetime and degradation for commercial lithium-ion batteries."
 readme = "README.md"
@@ -50,4 +50,4 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project.urls]
-Homepage = "https://github.com/NREL/BLAST-Lite"
+Homepage = "https://github.com/NatLabRockies/BLAST-Lite"

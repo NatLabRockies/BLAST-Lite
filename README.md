@@ -1,19 +1,19 @@
 ![BLAST-Lite](assets/icon-blast.jpg)
 
 # BLAST-Lite
-Battery Lifetime Analysis and Simulation Toolsuite (BLAST) provides a library of battery lifetime and degradation models for various commercial lithium-ion batteries from recent years. Degradation models are indentified from publically available lab-based aging data using NREL's battery life model identification toolkit. The battery life models predicted the expected lifetime of batteries used in mobile or stationary applications as functions of their temperature and use (state-of-charge, depth-of-discharge, and charge/discharge rates). Model implementation is in both Python and MATLAB programming languages. The MATLAB code also provides example applications (stationary storage and EV), climate data, and simple thermal management options. For more information on battery health diagnostics, prediction, and optimization, see [NREL's Battery Lifespan](https://www.nrel.gov/transportation/battery-lifespan.html) webpage.
+Battery Lifetime Analysis and Simulation Toolsuite (BLAST) provides a library of battery lifetime and degradation models for various commercial lithium-ion batteries from recent years. Degradation models are indentified from publically available lab-based aging data using NLR's battery life model identification toolkit. The battery life models predicted the expected lifetime of batteries used in mobile or stationary applications as functions of their temperature and use (state-of-charge, depth-of-discharge, and charge/discharge rates). Model implementation is in both Python and MATLAB programming languages. The MATLAB code also provides example applications (stationary storage and EV), climate data, and simple thermal management options. For more information on battery health diagnostics, prediction, and optimization, see [NLR's Battery Lifespan](https://www.nlr.gov/transportation/battery-lifespan.html) webpage.
 
 A wide variety of battery degradation models are provided for simulating batteries of different chemistries, manufacturers, formats, and capacities. All current examples are Lithium-ion batteries.
 
 ![Example battery life predictions](assets/example_battery_life.png)
 
-In addition to the capabilities in BLAST-Lite, [NREL's Electrochemical Energy Storage group](https://www.nrel.gov/transportation/energy-storage.html) has a wide-variety of modeling and simulation tools from nano-scale to megawatt-hour system level. Please contact us if you have further interest in NREL's battery modeling capabilities: <a href="mailto:Paul.Gasper\@nrel.gov">Paul.Gasper\@nrel.gov</a>, <a href="mailto:Kandler.Smith\@nrel.gov">Kandler.Smith\@nrel.gov</a>.
+In addition to the capabilities in BLAST-Lite, [NLR's Electrochemical Energy Storage group](https://www.nlr.gov/transportation/energy-storage.html) has a wide-variety of modeling and simulation tools from nano-scale to megawatt-hour system level. Please contact us if you have further interest in NLR's battery modeling capabilities: <a href="mailto:Paul.Gasper\@nlr.gov">Paul.Gasper\@nlr.gov</a>.
 
 ## Simulating real-world battery use cases
 Battery degradation is a complex interplay between battery-specific degradation behaviors, battery operating strategy and controls, and environmental conditions. BLAST-Lite provides a simplified set of tools to enable exploration of battery degradation versus all of these parameters, and has pre-built tools to help evaluate the life of applications like electric vehicles and stationary energy storage systems with reasonable assumptions.
 
 ### Electric vehicles
-Electric vehicle simulations are conducted after generating realistic state-of-charge profiles using NREL's [FASTSim vehicle simulation tool](https://www.nrel.gov/transportation/fastsim.html). The state-of-charge profile for an 'average' week of vehicle use can then be scaled according to annual vehicle miles traveled (VMT), using U.S. Department of Transportation data ([documented here](examples/application%20profiles/Electric%20vehicle/vehicle%20annual%20miles%20traveled%20distributions.xlsx)) to estimate the distribution of annual VMT across the U.S. population, utilizing the `scale_vehicle_profile_to_annual_efcs` function.
+Electric vehicle simulations are conducted after generating realistic state-of-charge profiles using NLR's [FASTSim vehicle simulation tool](https://www.nlr.gov/transportation/fastsim.html). The state-of-charge profile for an 'average' week of vehicle use can then be scaled according to annual vehicle miles traveled (VMT), using U.S. Department of Transportation data ([documented here](examples/application%20profiles/Electric%20vehicle/vehicle%20annual%20miles%20traveled%20distributions.xlsx)) to estimate the distribution of annual VMT across the U.S. population, utilizing the `scale_vehicle_profile_to_annual_efcs` function.
 
 For example, the [Panasonic NCA-Gr 18650](blast/models/nca_gr_Panasonic3Ah_2018.py) battery model can be compared to real world Tesla Model 3 Long Range vehicle data (extracted from [ev-inventory.com](https://ev-inventory.com/index.php) YouTube videos), which used Panasonic NCA-Gr 21700 batteries from their first model year in 2018 through at least 2022. Both the distribution of annual VMT and degradation model variability need to be accounted for to match the observed distributions of capacity fade and miles driven.
 
@@ -56,7 +56,7 @@ In the environment created and activate above, run `pip install blast-lite`.
 
 
 #### Note: Fetching temperature data from NSRDB
-The `blast.utils.get_nsrdb_temperature_data()` function uses an API key to access the NREL NSRDB for climate data for any requested location. If making many requests, please [get your own API key](https://developer.nrel.gov/signup) and replace the existing API key with yours in the 'examples\.hscfg' file. This configuration file is assumed by default to be in your 'home' folder, that is, the same folder as the code that is being run.
+The `blast.utils.get_nsrdb_temperature_data()` function uses an API key to access the NLR NSRDB for climate data for any requested location. If making many requests, please [get your own API key](https://developer.nrel.gov/signup) and replace the existing API key with yours in the 'examples\.hscfg' file. This configuration file is assumed by default to be in your 'home' folder, that is, the same folder as the code that is being run.
 
 If using a Windows machine, you may need to additionally run the following:
 
@@ -140,8 +140,8 @@ While we do not have the data to model every single type of battery, it is easy 
     - 50 Ah NMC-Gr 'B2' (higher energy density than B1 but lower power, questionable performance and durability under fast charging demands)
  - [DENSO NMC622-Gr battery aging model source](https://iopscience.iop.org/article/10.1149/1945-7111/ac2ebd)
  - Stationary storage battery use profiles are [provided open-source](https://dataserv.ub.tum.de/index.php/s/m1510254) by [Kucevic et al](https://www.sciencedirect.com/science/article/pii/S2352152X19309016)
- - Electric vehicle battery use profiles were generated using NREL's [FASTSim tool](https://www.nrel.gov/transportation/fastsim.html).
- - Some stationary storage battery use profiles were generated using NREL simulation tools: [REopt](https://reopt.nrel.gov/tool), [System Advisor Model](https://sam.nrel.gov/), [EVI-EDGES](https://www.nrel.gov/transportation/evi-edges.html)
+ - Electric vehicle battery use profiles were generated using NLR's [FASTSim tool](https://www.nlr.gov/transportation/fastsim.html).
+ - Some stationary storage battery use profiles were generated using NLR simulation tools: [REopt](https://reopt.nrel.gov/tool), [System Advisor Model](https://sam.nlr.gov/), [EVI-EDGES](https://www.nlr.gov/transportation/evi-edges.html)
 
 ### Acknowledgements
 Funding provided by U.S. Department of Energy Vehicle Technologies Office.
@@ -154,4 +154,4 @@ Special thanks to some keen-eyed users who noticed mistakes to correct:
 ### Authors
 Paul Gasper, Nina Prakash, Kandler Smith
 
-NREL SWR-22-69
+NLR SWR-22-69
