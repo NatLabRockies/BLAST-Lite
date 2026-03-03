@@ -56,7 +56,7 @@ In the environment created and activate above, run `pip install blast-lite`.
 
 
 #### Note: Fetching temperature data from NSRDB
-The `blast.utils.get_nsrdb_temperature_data()` function uses an API key to access the NLR NSRDB for climate data for any requested location. If making many requests, please [get your own API key](https://developer.nrel.gov/signup) and replace the existing API key with yours in the 'examples\.hscfg' file. This configuration file is assumed by default to be in your 'home' folder, that is, the same folder as the code that is being run.
+The `blast.utils.get_nsrdb_temperature_data()` function uses an API key to access the NLR NSRDB for climate data for any requested location. If making many requests, please [get your own API key](https://developer.nlr.gov/signup) and replace the existing API key with yours in the 'examples\.hscfg' file. This configuration file is assumed by default to be in your 'home' folder, that is, the same folder as the code that is being run.
 
 If using a Windows machine, you may need to additionally run the following:
 
