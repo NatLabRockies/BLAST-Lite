@@ -346,22 +346,22 @@ class BatteryDegradationModel:
         idx_turning_point: np.ndarray,
         max_time_diff_s=86400,
         max_EFC_diff=1,
-    ):
+    )->list:
         """
         Find breakpoints for simulating battery degradation, where degradation is calculated once
         a certain number of equivalent full cycles has passed, otherwise after a certain time has passed.
         Defaults are to calculate degradation every 1 EFC or every day.
 
         Args:
-            time_seconds (np.ndarray)       Time in seconds
-            EFCs (np.ndarray)               Equivalent full cycles
-            idx_turning_point (np.ndarray)  List of indices in the SOC profile that represent
+            time_seconds (np.ndarray):       Time in seconds
+            EFCs (np.ndarray):             Equivalent full cycles
+            idx_turning_point (np.ndarray):  List of indices in the SOC profile that represent
                                             the end of cycles
-            max_time_diff_s (int)           Maximum time difference in seconds
-            max_EFC_diff (int)              Maximum difference in equivalent full cycles
+            max_time_diff_s (int,optional):           Maximum time difference in seconds
+            max_EFC_diff (int,optional):              Maximum difference in equivalent full cycles
 
         Return:
-            breakpoints (list)
+            breakpoints(list)
         """
 
         breakpoints = []
@@ -387,18 +387,18 @@ class BatteryDegradationModel:
         return breakpoints
 
     def update_battery_state(
-        self, t_secs: np.ndarray, soc: np.ndarray, T_celsius: np.ndarray
-    ):
+        self, t_secs: np.ndarray, soc: np.ndarray, T_celsius: np.ndarray )->None:
         """
         Update the battery states, based both on the degradation state as well as the battery performance
         at the ambient temperature, T_celsius. This function assumes battery load is changing all the time.
 
         Args:
-            t_secs (np.ndarray)     Vector of the time in seconds since beginning of life
-                                    for the soc_timeseries data points
+            t_secs (np.ndarray):     Vector of the time in seconds since beginning of life for the soc_timeseries data points
             soc (np.ndarray):       Vector of the state-of-charge of the battery at each t_sec
-            T_celsius (ndarray)     Temperature of the battery during this time period, in Celsius units.
+            T_celsius (np.ndarray):     Temperature of the battery during this time period, in Celsius units.
 
+        Returns:
+            None
         """
 
         # Check some input types:
@@ -438,8 +438,11 @@ class BatteryDegradationModel:
         Update the battery states, based both on the degradation state as well as the battery performance
         at the ambient temperature, T_celsius. This function assumes battery load is repeating, i.e., stressors and
         degradation rates are unchanging for every timestep, and don't need to be calculated again.
-
         Updates self.states and self.outputs inplace.
+        Args:
+            is_conserve_energy_throughput (bool, optional):
+        Return:
+            None
         """
 
         # Just accumulate the cumulative stressors (total time, charge throughput in units of EFCs)
@@ -477,7 +480,9 @@ class BatteryDegradationModel:
         Updates self.rates inplace.
 
         Args:
-            stressors (dict)    Output from extract_stressors()
+            stressors (dict):    Output from extract_stressors()
+        Returns:
+            None
         """
         pass
 
@@ -489,7 +494,9 @@ class BatteryDegradationModel:
         Updates self.states inplace.
 
         Args:
-            stressors (dict)    Output from extract_stressors()
+            stressors (dict):    Output from extract_stressors()
+        Returns:
+            None
         """
         pass
 
@@ -500,7 +507,7 @@ class BatteryDegradationModel:
         Updates self.outputs inplace.
 
         Args:
-            stressors (dict)    Output from extract_stressors()
+            stressors (dict):    Output from extract_stressors()
         """
         pass
 
@@ -511,12 +518,12 @@ class BatteryDegradationModel:
         temperature, Ua, C-rate, and cycles.
 
         Args:
-            t_secs (np.ndarray)     Array of time in seconds
-            soc (np.ndarray)        Array of SOC
-            T_celsius (np.ndarray)  Array of temperatures in C
+            t_secs (np.ndarray):     Array of time in seconds
+            soc (np.ndarray):        Array of SOC
+            T_celsius (np.ndarray):  Array of temperatures in C
 
         Return:
-            stressors (dict)        Dictionary of stressor values.
+            stressors (dict):        Dictionary of stressor values.
 
         """
         # Extract stressors

@@ -123,10 +123,16 @@ class Nmc622_Gr_DENSO50Ah_Battery(BatteryDegradationModel):
         return np.exp(-(Ea/8.3144)*((1/TdegK)-(1/298.15)))
 
     # Battery model
-    def update_rates(self, stressors):
-        # Calculate and update battery degradation rates based on stressor values
-        # Inputs:
-        #   stressors (dict): output from extract_stressors
+    def update_rates(self, stressors:dict)->None:
+        """
+        Calculate and update battery degradation rates based on stressor values
+        
+        Args:
+            stressors (dict): Output from extract_stressors
+            
+        Returns:
+            None
+        """
 
         # Unpack stressors
         t_secs = stressors["t_secs"]
@@ -165,11 +171,16 @@ class Nmc622_Gr_DENSO50Ah_Battery(BatteryDegradationModel):
         for k, v in zip(self.rates.keys(), rates):
             self.rates[k] = np.append(self.rates[k], v)
     
-    def update_states(self, stressors):
-        # Update the battery states, based both on the degradation state as well as the battery performance
-        # at the ambient temperature, T_celsius
-        # Inputs:
-            #   stressors (dict): output from extract_stressors
+    def update_states(self, stressors:dict)->None:
+        """
+        Update the battery states, based both on the degradation state as well as the battery performance 
+        at the ambient temperature, T_celsius
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
             
         # Unpack stressors
         delta_t_days = stressors["delta_t_days"]
@@ -202,8 +213,15 @@ class Nmc622_Gr_DENSO50Ah_Battery(BatteryDegradationModel):
             x = self.states[k][-1] + v
             self.states[k] = np.append(self.states[k], x)
     
-    def update_outputs(self, stressors):
-        # Calculate outputs, based on current battery state
+    def update_outputs(self, stressors:dict)->None:
+        """
+        Calculate outputs, based on current battery state
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
         states = self.states
 
         # Capacity
@@ -218,8 +236,22 @@ class Nmc622_Gr_DENSO50Ah_Battery(BatteryDegradationModel):
         for k, v in zip(list(self.outputs.keys()), out):
             self.outputs[k] = np.append(self.outputs[k], v)
 
-    def _extract_stressors(self, t_secs, soc, T_celsius):
-        # extract the usual stressors
+    def _extract_stressors(
+        self,
+        t_secs: np.ndarray,
+        soc: np.ndarray,
+        T_celsius: np.ndarray
+        ) -> dict:
+        """
+        extract the usual stressors
+        Args:
+            t_secs (np.ndarray): Time vector in seconds since beginning of life.
+            soc (np.ndarray): State-of-charge values corresponding to each time step.
+            T_celsius (np.ndarray): Battery temperature during the time period.
+
+        Returns:
+            dict: Stressor values extracted from the input.
+        """
         stressors = BatteryDegradationModel._extract_stressors(self, t_secs, soc, T_celsius)
         # model specific stressors: Cchg
         t_days = t_secs / (24*60*60)

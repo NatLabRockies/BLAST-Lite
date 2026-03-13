@@ -32,7 +32,10 @@ class Nmc811_GrSi_LGMJ1_4Ah_Battery(BatteryDegradationModel):
             NMC811 is known to degrade quickly at voltages above 4.1 V.
     """
 
-    def __init__(self, degradation_scalar: float = 1, label: str = "NMC811-GrSi LG MJ1"):
+    def __init__(self, degradation_scalar: float = 1, label: str = "NMC811-GrSi LG MJ1")->None:
+        """
+        
+        """
         # States: Internal states of the battery model
         self.states = {
             'qLoss_t': np.array([0]),
@@ -102,10 +105,16 @@ class Nmc811_GrSi_LGMJ1_4Ah_Battery(BatteryDegradationModel):
         }
 
     # Battery model
-    def update_rates(self, stressors):
-        # Calculate and update battery degradation rates based on stressor values
-        # Inputs:
-        #   stressors (dict): output from extract_stressors
+    def update_rates(self, stressors:dict)->None:
+        """
+        Calculate and update battery degradation rates based on stressor values
+        
+        Args:
+            stressors (dict): Output from extract_stressors
+            
+        Returns:
+            None
+        """
 
         # Unpack stressors
         t_secs = stressors["t_secs"]
@@ -135,11 +144,16 @@ class Nmc811_GrSi_LGMJ1_4Ah_Battery(BatteryDegradationModel):
         for k, v in zip(self.rates.keys(), rates):
             self.rates[k] = np.append(self.rates[k], v)
     
-    def update_states(self, stressors):
-        # Update the battery states, based both on the degradation state as well as the battery performance
-        # at the ambient temperature, T_celsius
-        # Inputs:
-            #   stressors (dict): output from extract_stressors
+    def update_states(self, stressors:dict)->None:
+        """
+        Update the battery states, based both on the degradation state as well as the battery performance 
+        at the ambient temperature, T_celsius
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
             
         # Unpack stressors
         delta_t_days = stressors["delta_t_days"]
@@ -165,8 +179,15 @@ class Nmc811_GrSi_LGMJ1_4Ah_Battery(BatteryDegradationModel):
             x = self.states[k][-1] + v
             self.states[k] = np.append(self.states[k], x)
     
-    def update_outputs(self, stressors):
-        # Calculate outputs, based on current battery state
+    def update_outputs(self, stressors:dict)->None:
+        """
+        Calculate outputs, based on current battery state
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
         states = self.states
 
         # Capacity

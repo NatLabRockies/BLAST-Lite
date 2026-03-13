@@ -103,10 +103,16 @@ class NMC_Gr_50Ah_B2(BatteryDegradationModel):
             'pcyc': 0.907,
         }
     
-    def update_rates(self, stressors):
-        # Calculate and update battery degradation rates based on stressor values
-        # Inputs:
-        #   stressors (dict): output from extract_stressors
+    def update_rates(self, stressors:dict)->None:
+        """
+        Calculate and update battery degradation rates based on stressor values
+        
+        Args:
+            stressors (dict): Output from extract_stressors
+            
+        Returns:
+            None
+        """
 
         # Unpack stressors
         t_secs = stressors["t_secs"]
@@ -140,11 +146,16 @@ class NMC_Gr_50Ah_B2(BatteryDegradationModel):
         for k, v in zip(self.rates.keys(), rates):
             self.rates[k] = np.append(self.rates[k], v)
     
-    def update_states(self, stressors):
-        # Update the battery states, based both on the degradation state as well as the battery performance
-        # at the ambient temperature, T_celsius
-        # Inputs:
-            #   stressors (dict): output from extract_stressors
+    def update_states(self, stressors:dict)->None:
+        """
+        Update the battery states, based both on the degradation state as well as the battery performance 
+        at the ambient temperature, T_celsius
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
             
         # Unpack stressors
         delta_t_days = stressors["delta_t_days"]
@@ -170,8 +181,15 @@ class NMC_Gr_50Ah_B2(BatteryDegradationModel):
             x = self.states[k][-1] + v
             self.states[k] = np.append(self.states[k], x)
     
-    def update_outputs(self, stressors):
-        # Calculate outputs, based on current battery state
+    def update_outputs(self, stressors:dict)->None:
+        """
+        Calculate outputs, based on current battery state
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
         states = self.states
 
         # Capacity
