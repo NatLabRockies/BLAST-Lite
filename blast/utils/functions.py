@@ -290,7 +290,7 @@ def scale_vehicle_profile_to_annual_efcs(profile:pd.DataFrame, desired_efcs_per_
             'SOC': profile.loc[idx_reversals[i] + new_row_count, 'SOC'],
             'dSOC': 0
         })
-        after_rest = profile.iloc[idx_reversals[i] + new_row_count:].copy()
+        after_rest = profile.iloc[idx_reversals[i] + new_row_count:]
         new_time = profile.loc[idx_reversals[i] + new_row_count:, 'Time_s'] + rest_time_per_interval
         # cast new_time to same dtype as 'Time_s' column
         new_time = new_time.astype(profile['Time_s'].dtype)
