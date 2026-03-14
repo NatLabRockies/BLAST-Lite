@@ -9,7 +9,18 @@ import importlib
 from blast.models._available_models import available_models
 from blast.utils.rainflow import reversals
 
-def simulate_all_models(*args, **kwargs):
+def simulate_all_models(*args, **kwargs)->list:
+    """
+    Simulates all battery models.
+
+    Args:
+        *args:args->tuple
+        **kwargs: kwargs->dict
+
+    Returns:
+        list: cells
+    
+    """
     models = available_models()
     cells = []
     for model in models:
@@ -26,13 +37,13 @@ def get_nsrdb_temperature_data(location: str = "Honolulu, Hawaii") -> pd.DataFra
     provided location, and format for battery life simulation.
 
     Args:
-        location (str):      Descriptive location string.
+    - location (str):      Descriptive location string.
 
     Returns:
-        pd.DataFrame:  Temperature time series at the specified location.
+    - pd.DataFrame:  Temperature time series at the specified location.
     """
 
-    def nearest_site(tree, lat_coord, lon_coord):
+    def nearest_site(tree: cKDTree, lat_coord: float, lon_coord: float)->int:
         lat_lon = np.array([lat_coord, lon_coord])
         dist, pos = tree.query(lat_lon)
         return pos
@@ -80,17 +91,17 @@ def get_nsrdb_temperature_data(location: str = "Honolulu, Hawaii") -> pd.DataFra
 
 def make_inputs_periodic(
     input_timeseries: dict, interp_time_window_hours: float
-) -> pd.DataFrame:
+) -> dict:
     """
     Linearly interpolate the last 'interp_time_window_hours' of the input to ensure periodicity.
 
     Args:
-        input_timeseries (dict):     Dictionary with keys ['Temperature_C', 'SOC', 'Time_s']
+        -input_timeseries (dict):     Dictionary with keys ['Temperature_C', 'SOC', 'Time_s']
                                     and timeseries values.
-        interp_time_window_hours (float):    Number of hours to interpolate, from end of timeseries
+        -interp_time_window_hours (float):    Number of hours to interpolate, from end of timeseries
 
     Returns:
-        dict:    Dictionary with keys ['Temperature_C', 'SOC', 'Time_s'] after interpolation.
+        -dict:    Dictionary with keys ['Temperature_C', 'SOC', 'Time_s'] after interpolation.
     """
 
     # Check if required keys are in the input_timeseries dictionary
@@ -144,12 +155,12 @@ def assemble_one_year_input(
     linked by timestamp.
 
     Args:
-        soc (pd.DataFrame):      Dataframe with SOC profile and 'Time_s' timestamp
-        climate (pd.DataFrame):  Dataframe with temperature data and 'Time_s' timestamp column
-        time_interval (int):     Interval at which the final data is resampled to
+        - soc (pd.DataFrame):      Dataframe with SOC profile and 'Time_s' timestamp
+        - climate (pd.DataFrame):  Dataframe with temperature data and 'Time_s' timestamp column
+        - time_interval (int):     Interval at which the final data is resampled to
 
     Return:
-        pd.DataFrame:  Combined DataFrame with time, soc, and temperature columns.
+        - pd.DataFrame:  Combined DataFrame with time, soc, and temperature columns.
     """
     # Check if 'Time_s' column exists in both data frames
     if "Time_s" not in soc.columns:
@@ -210,7 +221,16 @@ def tile_to_one_year(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 # TODO (Paul 2/3/2025): something is not exactly perfect but I think it's close enough
-def scale_vehicle_profile_to_annual_efcs(profile, desired_efcs_per_year, show_efcs=False):
+def scale_vehicle_profile_to_annual_efcs(profile:pd.DataFrame, desired_efcs_per_year, show_efcs=False)->pd.DataFrame:
+    """
+    Args:
+        profile (pd.DataFrame):
+        desired_efcs_per_year :
+        show_efcs (bool, optional):
+
+    Returns:
+        pd.DataFrame:
+    """
     profile['dSOC'] = profile['SOC'].diff().fillna(0)
     efcs = 0.5 * profile['dSOC'].abs().sum()
     duration = profile['Time_s'].iloc[-1] - profile['Time_s'].iloc[0]
@@ -293,7 +313,18 @@ def scale_vehicle_profile_to_annual_efcs(profile, desired_efcs_per_year, show_ef
         print(efcs_per_year)
     return profile
 
-def decimate_and_rescale_profile(profile, decimation_factor, tol=1e-1, show_efcs=False):
+def decimate_and_rescale_profile(profile:pd.DataFrame, decimation_factor, tol=1e-1, show_efcs=False)->pd.DataFrame:
+    """
+
+    Args:
+        profile (pd.DataFrame):
+        decimation_factor:
+        tol (float, optional):
+        show_efcs (bool, optional):
+
+    Returns:
+        pd.DataFrame:
+    """
     dSOC = profile['SOC'].diff().fillna(0)
     efcs_original = 0.5 * dSOC.abs().sum()
     if show_efcs:
@@ -312,7 +343,16 @@ def decimate_and_rescale_profile(profile, decimation_factor, tol=1e-1, show_efcs
         print(f"Decimated and rescaled EFCs: {efcs}")
     return profile
 
-def derate_profile(profile, derating_factor, max_soc=0.9):
+def derate_profile(profile:pd.DataFrame, derating_factor, max_soc=0.9)->pd.DataFrame:
+    """
+    Args:
+        profile (pd.DataFrame):
+        derating_factor :
+        max_soc (float, optional):
+
+    Returns:
+        pd.DataFrame:
+    """
     # Derate a profile by scaling dSOC by the derating factor.
     # If feasible, reduce max_soc as well.
     dSOC = profile['SOC'].diff().fillna(0)
@@ -322,15 +362,31 @@ def derate_profile(profile, derating_factor, max_soc=0.9):
         profile['SOC'] = profile['SOC'] - (profile['SOC'].max() - max_soc)
     return profile
 
-def rescale_profile(profile, rescaling_factor):
-    # Rescale a profile by scaling dSOC by the rescaling factor.
+def rescale_profile(profile:pd.DataFrame, rescaling_factor)->pd.DataFrame:
+    """
+    Rescale a profile (pd.Dataframe)by scaling dSOC by the rescaling factor.
+
+    Args:
+        profile (pd.DataFrame):
+        rescaling_factor:
+
+    Returns:
+        pd.DataFrame:
+    """
     dSOC = profile['SOC'].diff().fillna(0)
     dSOC = dSOC * rescaling_factor
     profile['SOC'] = np.cumsum(dSOC) + profile['SOC'].iloc[0]
     return profile
 
-def rescale_soc(soc, rescaling_factor):
-    # Rescale an soc vector by scaling dSOC by the rescaling factor.
+def rescale_soc(soc : np.ndarray, rescaling_factor)->np.ndarray:
+    """
+    Rescale an soc vector by scaling dSOC by the rescaling factor.
+    Args:
+        soc (np.ndarray):
+        rescaling_factor:
+    Returns:
+        np.ndarray:
+    """
     dSOC = np.diff(soc, prepend=soc[0])
     dSOC = dSOC * rescaling_factor
     soc = np.cumsum(dSOC) + soc[0]
@@ -340,10 +396,24 @@ def rescale_soc(soc, rescaling_factor):
     return soc
 
 def simulate_battery_life_distribution(Battery, input, degradation_scalar_std=0.15, degradation_scalar_mean=1., **kwargs):
-    # Simulate the distribution of battery life from normally distributed degradation scalars.
-    # Simulations are done at -3, -2, -1, 0, 1, 2, 3 sigma. The resulting outputs from the 
-    # simulations at any non-zero sigma are resized to be the same size as the nominal simulation
-    # to allow for easy plotting.
+    """
+    Simulate a distribution of battery lifetimes using normally
+    distributed degradation scalars.
+
+    Battery simulations are performed at multiple sigma values
+    (-3, -2, -1, 0, 1, 2, 3) around the mean degradation scalar.
+    Non-nominal simulation outputs are interpolated to match the
+    nominal simulation length for easier comparison and plotting.
+
+    Args:
+        Battery:
+        input:
+        degradation_scalar_std (float, optional):
+        degradation_scalar_mean (float, optional):
+        **kwargs:
+    Returns:
+        dict:
+    """
     sigmas = [0, -3, -2, -1, 1, 2, 3]
     batteries_sigma = {}
     for sigma in sigmas:

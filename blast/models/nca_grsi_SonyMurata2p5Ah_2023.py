@@ -131,14 +131,25 @@ class NCA_GrSi_SonyMurata2p5Ah_Battery(BatteryDegradationModel):
         }
 
     # Override super class update_battery_state because this model uses a few unusual stressors
-    def update_battery_state(self, t_secs, soc, T_celsius):
-        # Update the battery states, based both on the degradation state as well as the battery performance
-        # at the ambient temperature, T_celsius. This function assumes battery load is changing all the time.
-        # Inputs:
-            #   t_secs (ndarry): vector of the time in seconds since beginning of life for the soc_timeseries data points
-            #   soc (ndarry): vector of the state-of-charge of the battery at each t_sec
-            #   T_celsius (ndarray): the temperature of the battery during this time period, in Celsius units.
-            
+        
+    def update_battery_state(
+        self,
+        t_secs: np.ndarray,
+        soc: np.ndarray,
+        T_celsius: np.ndarray
+        ) -> None:
+        """
+        Update the battery states, based both on the degradation state as well as the battery performance
+        at the ambient temperature, T_celsius. This function assumes battery load is changing all the time.
+
+        Args:
+            t_secs (np.ndarray): Time vector in seconds since beginning of life.
+            soc (np.ndarray): State-of-charge values corresponding to each time step.
+            T_celsius (np.ndarray): Battery temperature during the time period.
+
+        Returns:
+            None
+        """
         # Check some input types:
         if not isinstance(t_secs, np.ndarray):
             raise TypeError('Input "t_secs" must be a numpy.ndarray')
@@ -174,10 +185,16 @@ class NCA_GrSi_SonyMurata2p5Ah_Battery(BatteryDegradationModel):
         self.update_outputs(stressors)
         # print(f"q_t: {self.outputs['q_t'][-1]}, q_EFC: {self.outputs['q_EFC'][-1]}, q: {self.outputs['q'][-1]}")
 
-    def update_rates(self, stressors):
-        # Calculate and update battery degradation rates based on stressor values
-        # Inputs:
-        #   stressors (dict): output from extract_stressors
+    def update_rates(self, stressors:dict)->None:
+        """
+        Calculate and update battery degradation rates based on stressor values
+        
+        Args:
+            stressors (dict): Output from extract_stressors
+            
+        Returns:
+            None
+        """
 
         # Unpack stressors
         t_secs = stressors["t_secs"]
@@ -237,11 +254,16 @@ class NCA_GrSi_SonyMurata2p5Ah_Battery(BatteryDegradationModel):
         for k, v in zip(self.rates.keys(), rates):
             self.rates[k] = np.append(self.rates[k], v)
     
-    def update_states(self, stressors):
-        # Update the battery states, based both on the degradation state as well as the battery performance
-        # at the ambient temperature, T_celsius
-        # Inputs:
-            #   stressors (dict): output from extract_stressors
+    def update_states(self, stressors:dict)->None:
+        """
+        Update the battery states, based both on the degradation state as well as the battery performance 
+        at the ambient temperature, T_celsius
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
             
         # Unpack stressors
         delta_t_days = stressors["delta_t_days"]
@@ -268,8 +290,15 @@ class NCA_GrSi_SonyMurata2p5Ah_Battery(BatteryDegradationModel):
             x = self.states[k][-1] + v
             self.states[k] = np.append(self.states[k], x)
     
-    def update_outputs(self, stressors):
-        # Calculate outputs, based on current battery state
+    def update_outputs(self, stressors:dict)->None:
+        """
+        Calculate outputs, based on current battery state
+        Args:
+            stressors (dict): Output from extract_stressors
+
+        Returns:
+            None
+        """
         states = self.states
 
         # Capacity
@@ -283,8 +312,22 @@ class NCA_GrSi_SonyMurata2p5Ah_Battery(BatteryDegradationModel):
         for k, v in zip(list(self.outputs.keys()), out):
             self.outputs[k] = np.append(self.outputs[k], v)
     
-    def _extract_stressors(self, t_secs, soc, T_celsius):
-        # extract the usual stressors
+    def _extract_stressors(
+        self,
+        t_secs: np.ndarray,
+        soc: np.ndarray,
+        T_celsius: np.ndarray
+        ) -> dict:
+        """
+        extract the usual stressors
+        Args:
+            t_secs (np.ndarray): Time vector in seconds since beginning of life.
+            soc (np.ndarray): State-of-charge values corresponding to each time step.
+            T_celsius (np.ndarray): Battery temperature during the time period.
+
+        Returns:
+            dict: Stressor values extracted from the input.
+        """
         stressors = BatteryDegradationModel._extract_stressors(self, t_secs, soc, T_celsius)
         # model specific stressors: soc_low, soc_high, Cchg, Cdis
         soc_low = np.min(soc)
