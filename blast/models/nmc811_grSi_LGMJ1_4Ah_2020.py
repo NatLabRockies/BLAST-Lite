@@ -33,9 +33,7 @@ class Nmc811_GrSi_LGMJ1_4Ah_Battery(BatteryDegradationModel):
     """
 
     def __init__(self, degradation_scalar: float = 1, label: str = "NMC811-GrSi LG MJ1")->None:
-        """
         
-        """
         # States: Internal states of the battery model
         self.states = {
             'qLoss_t': np.array([0]),

@@ -13,10 +13,12 @@ def simulate_all_models(*args, **kwargs)->list:
     """
     Simulates all battery models.
 
-    # Arguments
-    
+    Args:
+        *args:args->tuple
+        **kwargs: kwargs->dict
 
-    # Returns
+    Returns:
+        list: cells
     
     """
     models = available_models()
