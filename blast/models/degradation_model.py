@@ -466,15 +466,19 @@ class BatteryDegradationModel:
                 self.stressors["dod"][1] / self.outputs["q"][-1],
             )
         else:
+            # Throughput per repeat shrinks with the capacity, for the EFC counter and for the degradation.
+            delta_efc_scaled = self.stressors["delta_efc"][-1] * self.outputs['q'][-1]
             self.stressors["efc"] = np.append(
                 self.stressors["efc"],
-                self.stressors["efc"][-1] + self.stressors["delta_efc"][-1] * self.outputs['q'][-1],
+                self.stressors["efc"][-1] + delta_efc_scaled,
             )
 
         # copy end values of old stressors into a dict
         stressors = {}
         for k, v in zip(self.stressors.keys(), self.stressors.values()):
             stressors[k] = v[-1]
+        if not is_conserve_energy_throughput:
+            stressors["delta_efc"] = delta_efc_scaled
 
         self.update_states(stressors)
         self.update_outputs(stressors)
