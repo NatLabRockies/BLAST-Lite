@@ -548,7 +548,9 @@ class BatteryDegradationModel:
         abs_instantaneous_crate[
             abs_instantaneous_crate < 1e-2
         ] = 0  # get rid of extremely small values (storage) before calculating mean
-        Crate = np.trapz(abs_instantaneous_crate, t_days[1:]) / delta_t_days
+        # One rate per sampling interval, weighted by the interval length, so the first interval counts and a
+        # two-sample input returns its rate instead of 0.
+        Crate = np.sum(abs_instantaneous_crate * np.diff(t_days)) / delta_t_days
         # Check storage condition, which will give nan Crate:
         if np.isnan(Crate):
             Crate = 0
