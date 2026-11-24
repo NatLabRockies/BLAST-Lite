@@ -266,3 +266,19 @@ class TestInputTypeCasting:
             model.update_battery_state(
                 np.array([0, 1, 2]), np.array([0, 1]), np.array([25, 25])
             )
+
+
+class TestCrateIntervalWeighting:
+    def test_constant_rate_over_many_samples_is_exact(self, model):
+        """A constant C/2 ramp sampled every minute has an average rate of 0.5C, whatever the sample count."""
+        t_secs = np.arange(0, 3601, 60.0)
+        soc = 0.5 * t_secs / 3600
+        stressors = model._extract_stressors(t_secs, soc, np.full_like(soc, 25.0))
+        assert stressors["Crate"] == pytest.approx(0.5)
+
+    def test_rest_then_one_c_is_time_weighted(self, model):
+        """Half an hour at rest followed by half an hour at 1C averages 0.5C."""
+        t_secs = np.array([0.0, 1800.0, 3600.0])
+        soc = np.array([0.0, 0.0, 0.5])
+        stressors = model._extract_stressors(t_secs, soc, np.full_like(soc, 25.0))
+        assert stressors["Crate"] == pytest.approx(0.5)
